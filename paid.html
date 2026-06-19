@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Placený demonstrační režim automatu Koruna Royale s kreditem 900 Kč.">
+    <title>Koruna Royale | Herní režim 900 Kč</title>
+    <link rel="stylesheet" href="./styles.css?v=20260619-3d">
+  </head>
+  <body data-page="paid">
+    <div class="game-cursor" id="gameCursor" aria-hidden="true"></div>
+    <main class="casino-shell" aria-label="Demonstrační herní automat Koruna Royale">
+      <div class="light-rig" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <section class="casino-floor">
+        <aside class="side-rail left-rail" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </aside>
+
+        <article class="slot-cabinet" aria-label="Koruna Royale automat">
+          <header class="cabinet-top">
+            <div class="brand-block">
+              <span class="brand-crest">KR</span>
+              <div>
+                <p class="overline">Aktivovaný demo režim 18+</p>
+                <h1>Koruna Royale</h1>
+              </div>
+            </div>
+            <div class="mode-badge" id="modeBadge">Kredit 900 Kč</div>
+            <button class="icon-button" id="soundToggle" type="button" aria-label="Vypnout zvuk" title="Zvuk">
+              <span aria-hidden="true">♪</span>
+            </button>
+          </header>
+
+          <section class="jackpot-board" aria-label="Jackpot a herní stav">
+            <div class="jackpot-copy">
+              <span>Royal Jackpot</span>
+              <strong>128 500 Kč</strong>
+            </div>
+            <div class="jackpot-meter" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="hot-badge">
+              <span>VIP režim</span>
+              <strong>Kredit aktivní</strong>
+            </div>
+          </section>
+
+          <div class="marquee" aria-hidden="true">
+            <span>DNES VE HŘE</span>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <span>VÝHRY DEMO</span>
+          </div>
+
+          <section class="status-strip" aria-label="Stav hry">
+            <div class="stat-pill primary">
+              <span>Kredit</span>
+              <strong id="creditValue">900 Kč</strong>
+            </div>
+            <div class="stat-pill" id="freeSpinStat">
+              <span>Režim</span>
+              <strong id="freeSpinsValue">VIP</strong>
+            </div>
+            <div class="stat-pill">
+              <span>Poslední výhra</span>
+              <strong id="lastWinValue">0 Kč</strong>
+            </div>
+          </section>
+
+          <section class="reel-theater" aria-live="polite" aria-label="Animované válce">
+            <div class="jackpot-flash" id="jackpotFlash"></div>
+            <div class="glass-reflection"></div>
+            <div class="theater-badge left">MAX</div>
+            <div class="theater-badge right">WIN</div>
+            <div class="reels" id="reels">
+              <div class="reel" data-reel="0">
+                <div class="symbol symbol-seven">7</div>
+                <div class="symbol symbol-bar">BAR</div>
+                <div class="symbol symbol-star">★</div>
+              </div>
+              <div class="reel" data-reel="1">
+                <div class="symbol symbol-crown">K</div>
+                <div class="symbol symbol-seven">7</div>
+                <div class="symbol symbol-gem">◆</div>
+              </div>
+              <div class="reel" data-reel="2">
+                <div class="symbol symbol-star">★</div>
+                <div class="symbol symbol-crown">K</div>
+                <div class="symbol symbol-bar">BAR</div>
+              </div>
+            </div>
+            <div class="payline" aria-hidden="true"></div>
+            <div class="coin-burst" id="coinBurst" aria-hidden="true"></div>
+          </section>
+
+          <section class="control-deck">
+            <div class="control-card">
+              <span>Sázka</span>
+              <strong id="betValue">50 Kč</strong>
+            </div>
+            <button class="spin-button" id="spinButton" type="button">
+              <span class="spin-ring" aria-hidden="true"></span>
+              <span>ZATOČIT</span>
+            </button>
+            <div class="control-card">
+              <span>Výplatní linie</span>
+              <strong>1 středová</strong>
+            </div>
+          </section>
+
+          <section class="message-panel" id="messagePanel">
+            Platba potvrzena. Hrajete s kreditem 900 Kč v demonstračním režimu.
+          </section>
+
+          <section class="rules-panel" aria-label="Ceník a pravidla hry">
+            <div class="price-card">
+              <span>Balíček Royal</span>
+              <strong>900 Kč = 900 kreditů</strong>
+              <p>Sázka je 50 Kč za zatočení. Balíček tedy odpovídá 18 základním zatočením bez započtení případných demo výher.</p>
+            </div>
+            <div class="paytable-card">
+              <span>Výplatní tabulka</span>
+              <div class="paytable-grid">
+                <p>7 7 7</p><strong>500 Kč</strong>
+                <p>BAR BAR BAR</p><strong>250 Kč</strong>
+                <p>K K K</p><strong>200 Kč</strong>
+                <p>★ ★ ★</p><strong>150 Kč</strong>
+                <p>◆ ◆ ◆</p><strong>100 Kč</strong>
+                <p>CZ CZ CZ</p><strong>50 Kč</strong>
+                <p>2x 7 na linii</p><strong>75 Kč</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="game-stats" aria-label="Statistiky hry">
+            <div>
+              <span>Celkem zatočení</span>
+              <strong id="totalSpins">0</strong>
+            </div>
+            <div>
+              <span>Demo výhry</span>
+              <strong id="winCount">0</strong>
+            </div>
+            <div>
+              <span>Nejvyšší výhra</span>
+              <strong id="bestWin">0 Kč</strong>
+            </div>
+            <div>
+              <span>Vyplaceno v demu</span>
+              <strong id="totalWon">0 Kč</strong>
+            </div>
+          </section>
+
+          <footer class="cabinet-footer">
+            <span>Pravidla: 1 středová linie, sázka 50 Kč, pevná výplatní tabulka.</span>
+            <span>Po 5. kole nebo vyčerpání kreditu se zobrazí platební výzva.</span>
+          </footer>
+        </article>
+
+        <aside class="side-rail right-rail" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </aside>
+      </section>
+    </main>
+
+    <div class="email-modal" id="emailModal" role="dialog" aria-modal="true" aria-labelledby="emailModalTitle" aria-hidden="true">
+      <div class="modal-backdrop"></div>
+      <section class="modal-card compact-modal">
+        <p class="modal-icon" aria-hidden="true">✉️</p>
+        <h2 id="emailModalTitle">Zadejte email pro pokračování</h2>
+        <p>Máte za sebou 3. zatočení. Pro další hraní prosím zadejte emailovou adresu.</p>
+        <label class="input-label" for="playerEmail">Email</label>
+        <input class="email-input" id="playerEmail" type="email" inputmode="email" autocomplete="email" placeholder="vas@email.cz" required>
+        <p class="form-error" id="emailError" role="alert"></p>
+        <button class="continue-button" id="emailContinueButton" type="button" disabled>
+          Pokračovat ve hře
+        </button>
+      </section>
+    </div>
+
+    <div class="payment-modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+      <div class="modal-backdrop"></div>
+      <section class="modal-card">
+        <p class="modal-icon" aria-hidden="true">🎰</p>
+        <h2 id="modalTitle">Pokračujte ve hře bez omezení</h2>
+        <p id="modalReason">Váš kredit 900 Kč byl vyčerpán.</p>
+        <p>Balíček Royal stojí 900 Kč a připíše 900 kreditů. Při sázce 50 Kč jde o 18 základních zatočení bez započtení případných demo výher.</p>
+
+        <a class="pay-button" href="https://buy.stripe.com/28EcN44914Q65Sy2SG2400i" id="payButton" target="_blank" rel="noopener">Zaplatit zde</a>
+      </section>
+    </div>
+
+    <script src="./script.js?v=20260619-3d"></script>
+  </body>
+</html>
