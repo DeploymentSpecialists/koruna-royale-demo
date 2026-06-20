@@ -358,6 +358,15 @@ h1 {
   white-space: nowrap;
 }
 
+.charged-badge {
+  color: #fff1b7;
+  border-color: rgba(255, 227, 143, 0.42);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 227, 143, 0.2), transparent 46%),
+    rgba(255, 255, 255, 0.075);
+  box-shadow: 0 0 22px rgba(255, 227, 143, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
 .icon-button {
   width: 44px;
   height: 44px;
@@ -593,6 +602,15 @@ h1 {
   text-shadow: 0 0 18px rgba(255, 227, 143, 0.26);
 }
 
+.charged-credit {
+  border-color: rgba(255, 227, 143, 0.62) !important;
+  background:
+    radial-gradient(circle at 78% 24%, rgba(255, 227, 143, 0.28), transparent 38%),
+    radial-gradient(circle at 15% 80%, rgba(89, 217, 142, 0.18), transparent 42%),
+    rgba(255, 255, 255, 0.075) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 28px rgba(255, 227, 143, 0.12);
+}
+
 .reel-theater {
   grid-area: theater;
   position: relative;
@@ -803,16 +821,27 @@ body.is-winning .symbol:nth-child(2) {
 }
 
 .symbol-star {
+  color: #241605;
   background: linear-gradient(145deg, #f8eec6, #e8be68, #ad762a);
 }
 
-.symbol-gem {
-  color: #e9fdff;
-  background: linear-gradient(145deg, #66e7db, #1f8fb8 48%, #155078);
+.symbol-bell {
+  color: #201306;
+  background: linear-gradient(145deg, #fff1a9, #e8be68 50%, #9d671f);
 }
 
-.symbol-crown {
-  background: linear-gradient(145deg, #ffe9a3, #d99d3c 54%, #815017);
+.symbol-cherry {
+  color: #fff6f6;
+  background:
+    radial-gradient(circle at 32% 18%, rgba(255, 255, 255, 0.82), transparent 25%),
+    linear-gradient(145deg, #ff6b88, #d71945 52%, #710b25);
+}
+
+.symbol-lemon {
+  color: #272000;
+  background:
+    radial-gradient(circle at 32% 18%, rgba(255, 255, 255, 0.8), transparent 25%),
+    linear-gradient(145deg, #fff6a3, #f0df36 54%, #9a8d0b);
 }
 
 .payline {
@@ -865,6 +894,48 @@ body.is-winning .symbol:nth-child(2) {
   align-content: center;
   padding: 12px 14px;
   text-align: center;
+}
+
+.bet-card {
+  gap: 8px;
+  align-content: center;
+}
+
+.bet-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.bet-options button {
+  min-width: 0;
+  min-height: 32px;
+  border: 1px solid rgba(255, 227, 143, 0.22);
+  border-radius: 9px;
+  color: rgba(255, 247, 208, 0.86);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 900;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.bet-options button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 227, 143, 0.42);
+  background: rgba(255, 227, 143, 0.11);
+}
+
+.bet-options button.is-active {
+  color: #171105;
+  border-color: rgba(255, 247, 208, 0.64);
+  background: linear-gradient(180deg, #fff0ad, var(--gold) 62%, var(--gold-2));
+  box-shadow: 0 0 18px rgba(255, 227, 143, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.bet-options button:disabled {
+  opacity: 0.38;
+  transform: none;
 }
 
 .control-card:first-child,
