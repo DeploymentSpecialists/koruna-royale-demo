@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Prémiový demonstrační online automat v češtině s kasínovou atmosférou, efekty a placeným režimem.">
     <title>Koruna Royale | Prémiový český automat</title>
-    <link rel="stylesheet" href="./styles.css?v=20260619-3d">
+    <link rel="stylesheet" href="./styles.css?v=20260620-rules">
   </head>
   <body data-page="free">
     <div class="game-cursor" id="gameCursor" aria-hidden="true"></div>
@@ -62,7 +62,7 @@
               <strong id="creditValue">1 000 Kč</strong>
             </div>
             <div class="stat-pill" id="freeSpinStat">
-              <span>Zatočení zdarma</span>
+              <span>Volné spiny</span>
               <strong id="freeSpinsValue">5</strong>
             </div>
             <div class="stat-pill">
@@ -98,40 +98,46 @@
           </section>
 
           <section class="control-deck">
-            <div class="control-card">
-              <span>Sázka</span>
-              <strong id="betValue">50 Kč</strong>
+            <div class="control-card bet-card">
+              <span>Sázka na spin</span>
+              <strong id="betValue">10 Kč</strong>
+              <div class="bet-options" id="betOptions" role="group" aria-label="Nastavení sázky">
+                <button type="button" data-bet="10" class="is-active">10</button>
+                <button type="button" data-bet="25">25</button>
+                <button type="button" data-bet="50">50</button>
+                <button type="button" data-bet="100">100</button>
+              </div>
             </div>
             <button class="spin-button" id="spinButton" type="button">
               <span class="spin-ring" aria-hidden="true"></span>
               <span>ZATOČIT</span>
             </button>
             <div class="control-card">
-              <span>Výplatní linie</span>
-              <strong>1 středová</strong>
+              <span>Výherní linie</span>
+              <strong>3 aktivní</strong>
             </div>
           </section>
 
           <section class="message-panel" id="messagePanel">
-            Připraveno ke hře. Po 3. zatočení ověříme email a po 5. zatočení nabídneme pokračování.
+            Nastavte sázku, zatočte a výhra z aktivních linií se automaticky přičte ke kreditu.
           </section>
 
           <section class="rules-panel" aria-label="Ceník a pravidla hry">
             <div class="price-card">
-              <span>Balíček Royal</span>
-              <strong>900 Kč = 900 kreditů</strong>
-              <p>Sázka je 50 Kč za zatočení. Balíček tedy odpovídá 18 základním zatočením bez započtení případných demo výher.</p>
+              <span>Jak se hraje</span>
+              <strong>Vsadíte → zatočíte → výhra se přičte</strong>
+              <p>Každé zatočení je nezávislé. Automat vyhodnocuje tři vodorovné linie a výplata se násobí podle nastavené sázky.</p>
             </div>
             <div class="paytable-card">
               <span>Výplatní tabulka</span>
               <div class="paytable-grid">
-                <p>7 7 7</p><strong>500 Kč</strong>
-                <p>BAR BAR BAR</p><strong>250 Kč</strong>
-                <p>K K K</p><strong>200 Kč</strong>
-                <p>★ ★ ★</p><strong>150 Kč</strong>
-                <p>◆ ◆ ◆</p><strong>100 Kč</strong>
-                <p>CZ CZ CZ</p><strong>50 Kč</strong>
-                <p>2x 7 na linii</p><strong>75 Kč</strong>
+                <p>7 7 7</p><strong>50x sázka</strong>
+                <p>BAR BAR BAR</p><strong>25x sázka</strong>
+                <p>🔔 🔔 🔔</p><strong>18x sázka</strong>
+                <p>🍒 🍒 🍒</p><strong>12x sázka</strong>
+                <p>🍋 🍋 🍋</p><strong>8x sázka</strong>
+                <p>⭐ ⭐ ⭐</p><strong>6x sázka</strong>
+                <p>2x 7 na linii</p><strong>5x sázka</strong>
               </div>
             </div>
           </section>
@@ -142,7 +148,7 @@
               <strong id="totalSpins">0</strong>
             </div>
             <div>
-              <span>Demo výhry</span>
+              <span>Výherní spiny</span>
               <strong id="winCount">0</strong>
             </div>
             <div>
@@ -150,14 +156,14 @@
               <strong id="bestWin">0 Kč</strong>
             </div>
             <div>
-              <span>Vyplaceno v demu</span>
+              <span>Celkem vyhráno</span>
               <strong id="totalWon">0 Kč</strong>
             </div>
           </section>
 
           <footer class="cabinet-footer">
-            <span>Pravidla: 1 středová linie, sázka 50 Kč, pevná výplatní tabulka.</span>
-            <span>Výsledky jsou simulační a nejsou licencovanou hazardní hrou.</span>
+            <span>Pravidla: 3 vodorovné linie, volitelná sázka, výplaty podle násobků.</span>
+            <span>Výsledek každého spinu je náhodný a nezávislý na předchozích spinech.</span>
           </footer>
         </article>
 
@@ -194,6 +200,6 @@
       </section>
     </div>
 
-    <script src="./script.js?v=20260619-3d"></script>
+    <script src="./script.js?v=20260620-rules"></script>
   </body>
 </html>
