@@ -1,28 +1,38 @@
 const STRIPE_PAYMENT_URL = "https://buy.stripe.com/28EcN44914Q65Sy2SG2400i";
 const pageMode = document.body.dataset.page === "paid" ? "paid" : "free";
 
+const BET_OPTIONS = [10, 25, 50, 100];
+const START_CREDIT = pageMode === "paid" ? 900 : 1000;
+const FREE_SPIN_LIMIT = 5;
+
 const symbols = [
   { text: "7", className: "symbol-seven", weight: 7 },
   { text: "BAR", className: "symbol-bar", weight: 10 },
-  { text: "★", className: "symbol-star", weight: 15 },
-  { text: "K", className: "symbol-crown", weight: 13 },
-  { text: "◆", className: "symbol-gem", weight: 18 },
-  { text: "CZ", className: "symbol-bar", weight: 22 }
+  { text: "🔔", className: "symbol-bell", weight: 13 },
+  { text: "🍒", className: "symbol-cherry", weight: 16 },
+  { text: "🍋", className: "symbol-lemon", weight: 19 },
+  { text: "⭐", className: "symbol-star", weight: 22 }
 ];
 
 const payTable = {
-  "7|7|7": { amount: 500, text: "Královský jackpot" },
-  "BAR|BAR|BAR": { amount: 250, text: "Klasická linie BAR" },
-  "K|K|K": { amount: 200, text: "Tři koruny" },
-  "★|★|★": { amount: 150, text: "Zlatá hvězda" },
-  "◆|◆|◆": { amount: 100, text: "Diamantová řada" },
-  "CZ|CZ|CZ": { amount: 50, text: "Česká trojice" }
+  "7|7|7": { multiplier: 50, text: "Tři sedmičky" },
+  "BAR|BAR|BAR": { multiplier: 25, text: "Tři symboly BAR" },
+  "🔔|🔔|🔔": { multiplier: 18, text: "Tři zvonky" },
+  "🍒|🍒|🍒": { multiplier: 12, text: "Tři třešně" },
+  "🍋|🍋|🍋": { multiplier: 8, text: "Tři citrony" },
+  "⭐|⭐|⭐": { multiplier: 6, text: "Tři hvězdy" }
 };
 
+const paylines = [
+  { name: "horní linie", row: 0 },
+  { name: "středová linie", row: 1 },
+  { name: "spodní linie", row: 2 }
+];
+
 const state = {
-  credit: pageMode === "paid" ? 900 : 1000,
-  freeSpins: pageMode === "paid" ? 0 : 5,
-  bet: 50,
+  credit: START_CREDIT,
+  freeSpins: pageMode === "paid" ? Infinity : FREE_SPIN_LIMIT,
+  bet: 10,
   totalSpins: 0,
   winCount: 0,
   bestWin: 0,
@@ -46,6 +56,8 @@ const els = {
   winCount: document.querySelector("#winCount"),
   bestWin: document.querySelector("#bestWin"),
   totalWon: document.querySelector("#totalWon"),
+  betValue: document.querySelector("#betValue"),
+  betOptions: document.querySelector("#betOptions"),
   messagePanel: document.querySelector("#messagePanel"),
   jackpotFlash: document.querySelector("#jackpotFlash"),
   coinBurst: document.querySelector("#coinBurst"),
@@ -66,12 +78,19 @@ function money(value) {
 
 function updateUi() {
   els.creditValue.textContent = money(state.credit);
-  els.freeSpinsValue.textContent = pageMode === "paid" ? "VIP" : state.freeSpins;
+  els.betValue.textContent = money(state.bet);
+  els.freeSpinsValue.textContent = pageMode === "paid" ? "Bez limitu" : state.freeSpins;
   els.totalSpins.textContent = state.totalSpins;
   els.winCount.textContent = state.winCount;
   els.bestWin.textContent = money(state.bestWin);
   els.totalWon.textContent = money(state.totalWon);
   els.spinButton.disabled = state.locked || state.spinning || state.credit < state.bet;
+
+  document.querySelectorAll("[data-bet]").forEach((button) => {
+    const value = Number(button.dataset.bet);
+    button.classList.toggle("is-active", value === state.bet);
+    button.disabled = state.spinning || state.locked || value > state.credit;
+  });
 }
 
 function setMessage(text, isWin = false) {
@@ -130,29 +149,45 @@ function randomSymbol() {
   return symbols[symbols.length - 1];
 }
 
-function evaluatePayline(result) {
-  const exact = payTable[result.join("|")];
+function symbolClass(text) {
+  return symbols.find((symbol) => symbol.text === text)?.className || "symbol-star";
+}
+
+function evaluateLine(lineSymbols) {
+  const exact = payTable[lineSymbols.join("|")];
   if (exact) return exact;
 
-  const sevens = result.filter((symbol) => symbol === "7").length;
+  const sevens = lineSymbols.filter((symbol) => symbol === "7").length;
   if (sevens === 2) {
-    return { amount: 75, text: "Dvě sedmičky na středové linii" };
+    return { multiplier: 5, text: "Dvě sedmičky" };
   }
 
   return null;
 }
 
+function evaluateSpin(columns) {
+  const wins = [];
+  paylines.forEach((payline) => {
+    const lineSymbols = columns.map((column) => column[payline.row]);
+    const match = evaluateLine(lineSymbols);
+    if (match) {
+      wins.push({
+        ...match,
+        amount: match.multiplier * state.bet,
+        line: payline.name,
+        symbols: lineSymbols
+      });
+    }
+  });
+  return wins;
+}
+
 function spinResult() {
-  const result = [randomSymbol().text, randomSymbol().text, randomSymbol().text];
-  return { result, win: evaluatePayline(result) };
+  const columns = els.reels.map(() => [randomSymbol().text, randomSymbol().text, randomSymbol().text]);
+  return { columns, wins: evaluateSpin(columns) };
 }
 
-function symbolClass(text) {
-  return symbols.find((symbol) => symbol.text === text)?.className || "symbol-seven";
-}
-
-function renderReel(reel, centerText) {
-  const values = [randomSymbol().text, centerText, randomSymbol().text];
+function renderReel(reel, values) {
   reel.innerHTML = values
     .map((value) => `<div class="symbol ${symbolClass(value)}">${value}</div>`)
     .join("");
@@ -178,6 +213,7 @@ function showWinEffect() {
 }
 
 function openPaymentModal(reason) {
+  if (pageMode === "paid") return;
   state.locked = true;
   state.paymentShown = true;
   els.modalReason.textContent = reason;
@@ -192,6 +228,7 @@ function isValidEmail(value) {
 }
 
 function openEmailModal() {
+  if (pageMode === "paid") return;
   state.locked = true;
   els.emailModal.classList.add("is-open");
   els.emailModal.setAttribute("aria-hidden", "false");
@@ -207,52 +244,51 @@ function closeEmailModal() {
   state.emailCaptured = true;
   els.emailModal.classList.remove("is-open");
   els.emailModal.setAttribute("aria-hidden", "true");
-  setMessage("Email je uložený. Automat je odemčený a můžete pokračovat ke 4. zatočení.");
-  updateUi();
-  els.spinButton.focus();
-}
-
-function unlockAfterConfirmation() {
-  state.locked = false;
-  if (pageMode === "paid") {
-    state.credit = 900;
-    state.totalSpins = 0;
-    state.emailCaptured = false;
-    state.paymentShown = false;
-    setMessage("Kredit byl obnoven na 900 Kč. Můžete pokračovat ve hře.");
-  } else {
-    window.location.href = "./paid.html";
-    return;
-  }
-  els.paymentModal.classList.remove("is-open");
-  els.paymentModal.setAttribute("aria-hidden", "true");
+  setMessage("Email je uložený. Automat je odemčený a můžete pokračovat.");
   updateUi();
   els.spinButton.focus();
 }
 
 function checkEndState() {
+  if (pageMode === "paid") {
+    if (state.credit < Math.min(...BET_OPTIONS)) {
+      setMessage("Kredit je dohraný. Při novém otevření této stránky se znovu načte 900 Kč.");
+    }
+    return;
+  }
+
   if (state.totalSpins === 3 && !state.emailCaptured) {
     window.setTimeout(openEmailModal, 420);
     return;
   }
 
-  if (pageMode === "free" && state.totalSpins >= 5 && !state.paymentShown) {
+  if (state.totalSpins >= FREE_SPIN_LIMIT && !state.paymentShown) {
     window.setTimeout(() => openPaymentModal("Právě jste využili všech 5 bezplatných pokusů."), 420);
-    return;
-  }
-
-  if (pageMode === "paid" && state.totalSpins >= 5 && !state.paymentShown) {
-    window.setTimeout(() => openPaymentModal("Máte za sebou 5. kolo. Pro pokračování prosím proveďte platbu."), 420);
-    return;
-  }
-
-  if (pageMode === "paid" && state.credit < state.bet) {
-    window.setTimeout(() => openPaymentModal("Váš kredit 900 Kč byl vyčerpán."), 420);
   }
 }
 
+function chooseBet(value) {
+  if (state.spinning || state.locked || value > state.credit) return;
+  state.bet = value;
+  setMessage(`Sázka nastavena na ${money(value)}. Každý spin je nezávislý a náhodný.`);
+  updateUi();
+}
+
 async function spin() {
-  if (state.locked || state.spinning || state.credit < state.bet) return;
+  if (state.locked || state.spinning) return;
+
+  if (state.credit < state.bet) {
+    const affordableBet = BET_OPTIONS.filter((value) => value <= state.credit).pop();
+    if (affordableBet) {
+      chooseBet(affordableBet);
+      setMessage(`Kredit nestačí na původní sázku. Snížil jsem sázku na ${money(affordableBet)}.`);
+    } else {
+      setMessage(pageMode === "paid"
+        ? "Kredit je dohraný. Otevřete stránku znovu pro nové nabití 900 Kč."
+        : "Kredit nestačí na další zatočení.");
+    }
+    return;
+  }
 
   state.spinning = true;
   document.body.classList.add("is-spinning");
@@ -260,19 +296,21 @@ async function spin() {
   state.totalSpins += 1;
   if (pageMode === "free" && state.freeSpins > 0) state.freeSpins -= 1;
   els.lastWinValue.textContent = money(0);
-  setMessage("Válce se roztáčí...");
+  setMessage(`Sázka ${money(state.bet)} přijata. Válce se roztáčí...`);
   updateUi();
   playSpinSound();
 
-  const { result, win } = spinResult();
+  const { columns, wins } = spinResult();
   els.reels.forEach((reel) => reel.classList.add("is-spinning"));
 
   await Promise.all(
     els.reels.map((reel, index) => new Promise((resolve) => {
-      const interval = window.setInterval(() => renderReel(reel, randomSymbol().text), 58);
+      const interval = window.setInterval(() => {
+        renderReel(reel, [randomSymbol().text, randomSymbol().text, randomSymbol().text]);
+      }, 58);
       window.setTimeout(() => {
         window.clearInterval(interval);
-        renderReel(reel, result[index]);
+        renderReel(reel, columns[index]);
         reel.classList.remove("is-spinning");
         playStopSound(index);
         resolve();
@@ -280,17 +318,20 @@ async function spin() {
     }))
   );
 
-  if (win) {
-    state.credit += win.amount;
+  if (wins.length) {
+    const totalWin = wins.reduce((sum, win) => sum + win.amount, 0);
+    const bestLineWin = wins.reduce((best, win) => Math.max(best, win.amount), 0);
+    state.credit += totalWin;
     state.winCount += 1;
-    state.bestWin = Math.max(state.bestWin, win.amount);
-    state.totalWon += win.amount;
-    els.lastWinValue.textContent = money(win.amount);
-    setMessage(`${win.text}: vyhráli jste ${money(win.amount)}.`, true);
+    state.bestWin = Math.max(state.bestWin, bestLineWin);
+    state.totalWon += totalWin;
+    els.lastWinValue.textContent = money(totalWin);
+    const lineText = wins.map((win) => `${win.line}: ${win.text} (${win.multiplier}x)`).join(", ");
+    setMessage(`${wins.length} výherní linie. ${lineText}. Připsáno ${money(totalWin)}.`, true);
     showWinEffect();
     playWinSound();
   } else {
-    setMessage("Tentokrát bez výhry. Výsledky jsou pouze demonstrační.");
+    setMessage("Bez výherní kombinace. Další spin je opět nezávislý a náhodný.");
   }
 
   state.spinning = false;
@@ -311,28 +352,44 @@ function setupCursor() {
   });
 }
 
-els.payButton.href = STRIPE_PAYMENT_URL;
-els.spinButton.addEventListener("click", spin);
+function bindEvents() {
+  els.payButton.href = STRIPE_PAYMENT_URL;
+  els.spinButton.addEventListener("click", spin);
 
-els.soundToggle.addEventListener("click", () => {
-  state.soundOn = !state.soundOn;
-  els.soundToggle.classList.toggle("is-muted", !state.soundOn);
-  els.soundToggle.setAttribute("aria-label", state.soundOn ? "Vypnout zvuk" : "Zapnout zvuk");
-});
+  els.betOptions.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-bet]");
+    if (!button) return;
+    chooseBet(Number(button.dataset.bet));
+  });
 
-els.playerEmail.addEventListener("input", () => {
-  const valid = isValidEmail(els.playerEmail.value);
-  els.emailContinueButton.disabled = !valid;
-  els.emailError.textContent = els.playerEmail.value && !valid ? "Zadejte platnou emailovou adresu." : "";
-});
+  els.soundToggle.addEventListener("click", () => {
+    state.soundOn = !state.soundOn;
+    els.soundToggle.classList.toggle("is-muted", !state.soundOn);
+    els.soundToggle.setAttribute("aria-label", state.soundOn ? "Vypnout zvuk" : "Zapnout zvuk");
+  });
 
-els.playerEmail.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && !els.emailContinueButton.disabled) closeEmailModal();
-});
+  els.playerEmail.addEventListener("input", () => {
+    const valid = isValidEmail(els.playerEmail.value);
+    els.emailContinueButton.disabled = !valid;
+    els.emailError.textContent = els.playerEmail.value && !valid ? "Zadejte platnou emailovou adresu." : "";
+  });
 
-els.emailContinueButton.addEventListener("click", () => {
-  if (isValidEmail(els.playerEmail.value)) closeEmailModal();
-});
+  els.playerEmail.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !els.emailContinueButton.disabled) closeEmailModal();
+  });
 
+  els.emailContinueButton.addEventListener("click", () => {
+    if (isValidEmail(els.playerEmail.value)) closeEmailModal();
+  });
+}
+
+function initReels() {
+  els.reels.forEach((reel) => {
+    renderReel(reel, [randomSymbol().text, randomSymbol().text, randomSymbol().text]);
+  });
+}
+
+initReels();
+bindEvents();
 setupCursor();
 updateUi();
